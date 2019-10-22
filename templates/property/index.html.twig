@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Nos Biens{% endblock %}
+
+{% block body %}
+
+{% if no_properties_to_deal is defined %}
+<h2>Pas de bien a afficher, on a tout vendu</h2>
+{% else %}
+<h1 class="mt-3">Visualiser tous nos biens</h1>
+{% endif %}
+
+
+{% endblock %}
