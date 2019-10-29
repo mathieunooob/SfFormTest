@@ -2,35 +2,55 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-// use Symfony\Repository\PropertyRepository;
+use Symfony\Repository\PropertyRepository;
 
 class PropertyController extends AbstractController
 {
+    /**
+     * @var PropertyRepository
+     */
+    private $repository;
+
+    // public function __construct(PropertyRepository $repository, ObjectManager $em)
+    // {
+    //     $this->repository = $repository;
+    //     $this->em =$em;
+    // }
 
     /**
      * @Route("/biens", name="property.index")
      * @return Response
      */
-      public function index(Request $request): Response
-     {
+    public function index(Request $request): Response
+    {
+        $properties = $this->getDoctrine()->getRepository(Property::class)->findAllVisible();
+        dump($properties);
+        return $this->render('property/index.html.twig', [
+            'current_menu' => 'properties',
+            'properties' => $properties
+        ]);
+
         /*
         $propertyRepo = $this->getDoctrine()->getRepository(Property::class);
-        // $properties = $propertyRepo->findAllVisible();
-        // $properties = $propertyRepo->findBy(['sold' => false]);
-        $property = $propertyRepo->findOneBy(['sold' => false]);
+        $properties = $propertyRepo->findAllVisible(); 
+        $properties = $propertyRepo->findBy(['sold' => false]);
+        $property = $propertyRepo->findAll();
         dump($property);
         if(!isset($property) || $property === null)
         { 
             return $this->render('property/index.html.twig', [
-                'no_properties_to_deal' => 'newview'
+                'no_properties_to_deal' => 'newview',
+                'current_menu' => 'properties'
             ]);
         } else
         {
-            $isSold = $property->getSold();
+            
+            $isSold[] = $property->getSold();
             if($isSold == false)
             {
                 $property->setSold(true);
@@ -39,12 +59,9 @@ class PropertyController extends AbstractController
                 $em->flush();
                 dump($property);
             }
-        }
-
-        */
-        return $this->render('property/index.html.twig', [
-            'current_menu' => 'properties'
-        ]);
+            */
+            // return $this->redirectToRoute('home');
+        
     }
     /**
      * @Route("/biens/{slug}-{id}", name="property.show", requirements={"slug": "[a-z0-9\-]*"})

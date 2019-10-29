@@ -1,14 +1,34 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Nos Biens{% endblock %}
+{% block title 'Nos Biens' %}
 
 {% block body %}
+<div class="container">
+    <div class="row md-6">
+        {% if no_properties_to_deal is defined %}
+        <h2>Pas de bien a afficher, on a tout vendu</h2>
+        {% else %}
+        <h1 class="mt-3">Visualiser tous nos biens</h1>
+        {% endif %}         
+    </div>
+    <h2 class="pb-2">Les Derniers Biens proposés</h2>
+    <div class="row flex">
+        {% for property in properties %}
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{{ path('property.show', {id: property.id, slug: property.slug}) }}">{{ property.title}}</a>
+                        </h5>
+                        <p class="card-text">{{property.city}} ({{property.postalCode}})</p>
+                        <div class="text-primary" style="font-weight: bold; font-size: 2rem ">{{ property.formattedPrice }} €</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
-{% if no_properties_to_deal is defined %}
-<h2>Pas de bien a afficher, on a tout vendu</h2>
-{% else %}
-<h1 class="mt-3">Visualiser tous nos biens</h1>
-{% endif %}
 
 
 {% endblock %}

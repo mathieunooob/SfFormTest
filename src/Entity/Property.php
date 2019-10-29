@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 use Cocur\Slugify\Slugify;
-
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PropertyRepository")
+ * @UniqueEntity("title")
  */
 class Property
 {
@@ -23,8 +25,12 @@ class Property
      * @ORM\Column(type="integer")
      */
     private $id;
-
+    
     /**
+     * @Assert\Length(min=5,
+     * max=255,
+     * minMessage = "Your first name must be at least {{ limit }} characters long",
+     * maxMessage = "Your first name cannot be longer than {{ limit }} characters")
      * @ORM\Column(type="string", length=255)
      */
     private $title;
@@ -36,11 +42,13 @@ class Property
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(min = 10, max = 400)
      */
     private $surface;
 
     /**
      * @ORM\Column(type="integer")
+     * 
      */
     private $rooms;
 
@@ -60,6 +68,7 @@ class Property
     private $price;
 
     /**
+     * Déjà surveillé dans le PropertyType
      * @ORM\Column(type="integer")
      */
     private $heat;
@@ -75,6 +84,7 @@ class Property
     private $address;
 
     /**
+     * @Assert\Regex("/^[0-9]{5}$/")
      * @ORM\Column(type="string", length=255)
      */
     private $postal_code;
