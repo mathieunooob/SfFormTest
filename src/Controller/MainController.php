@@ -19,7 +19,6 @@ class MainController extends AbstractController
     {
         $propertiesRepo = $this->getDoctrine()->getRepository(Property::class);
         $properties = $propertiesRepo->findLatest();
-        dump($properties);
         return $this->render('pages/home.html.twig', [
             'properties' => $properties
         ]);

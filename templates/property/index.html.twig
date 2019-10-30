@@ -3,32 +3,40 @@
 {% block title 'Nos Biens' %}
 
 {% block body %}
-<div class="container">
-    <div class="row md-6">
-        {% if no_properties_to_deal is defined %}
-        <h2>Pas de bien a afficher, on a tout vendu</h2>
-        {% else %}
-        <h1 class="mt-3">Visualiser tous nos biens</h1>
-        {% endif %}         
-    </div>
-    <h2 class="pb-2">Les Derniers Biens proposés</h2>
-    <div class="row flex">
-        {% for property in properties %}
-            <div class="col-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="{{ path('property.show', {id: property.id, slug: property.slug}) }}">{{ property.title}}</a>
-                        </h5>
-                        <p class="card-text">{{property.city}} ({{property.postalCode}})</p>
-                        <div class="text-primary" style="font-weight: bold; font-size: 2rem ">{{ property.formattedPrice }} €</div>
+    <div class="jumbotron">
+        <div class="container">
+            {{ form_start(form) }}
+            <div class="form-row align-items-end">
+                <div class="col">
+                    {{ form_row(form.minSurface)}}
+                </div>
+                <div class="col">
+                    {{ form_row(form.maxPrice)}}
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <button class="btn btn-secondary">Rechercher</button>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+            {{ form_end(form) }}
+        </div>
     </div>
-</div>
-
-
-
+    <div class="container mt-md-4">
+        {% if properties is defined %}
+        <h1 class="mt-3">Visualiser tous nos biens</h1>
+        {% else %}
+        <h1>Pas de bien a afficher</h1>
+        {% endif %}
+        <div class="row">
+            {% for property in properties %}
+            <div class="col-md-4">
+                {% include 'property/_property.html.twig'%}
+            </div>
+            {% endfor %}       
+        </div>
+        <div class="pagination justify-content-center">
+            {{ knp_pagination_render(properties) }}
+        </div>
+    </div>
 {% endblock %}

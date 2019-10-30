@@ -2,7 +2,11 @@
 namespace App\Controller;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
+use App\Form\PropertySearchType;
 use Doctrine\Common\Persistence\ObjectManager;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,42 +30,29 @@ class PropertyController extends AbstractController
      * @Route("/biens", name="property.index")
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(PaginatorInterface $paginator, Request $request): Response
     {
-        $properties = $this->getDoctrine()->getRepository(Property::class)->findAllVisible();
-        dump($properties);
+        // Créer une entité qui va représenter notre recherche = Entity\PropertySearch
+        // Créer un formulaire = Form\PropertySearchType avec bin/console make:form
+        // Gérer le traitement dans le controller
+        
+        $search = new PropertySearch();
+        $form = $this->createForm(PropertySearchType::class, $search);
+        $form->handleRequest($request);
+        
+        // Fin de gestion pour affichage avec filtre
+
+        $em = $this->getDoctrine()->getRepository(Property::class);
+        $properties = $paginator->paginate(
+            $em->findAllVisibleQuery($search),
+            $request->query->getInt('page', 1),
+            12
+        );
         return $this->render('property/index.html.twig', [
             'current_menu' => 'properties',
-            'properties' => $properties
+            'properties' => $properties,
+            'form' => $form->createView()
         ]);
-
-        /*
-        $propertyRepo = $this->getDoctrine()->getRepository(Property::class);
-        $properties = $propertyRepo->findAllVisible(); 
-        $properties = $propertyRepo->findBy(['sold' => false]);
-        $property = $propertyRepo->findAll();
-        dump($property);
-        if(!isset($property) || $property === null)
-        { 
-            return $this->render('property/index.html.twig', [
-                'no_properties_to_deal' => 'newview',
-                'current_menu' => 'properties'
-            ]);
-        } else
-        {
-            
-            $isSold[] = $property->getSold();
-            if($isSold == false)
-            {
-                $property->setSold(true);
-                $em = $this->getDoctrine()->getManager();
-                $em->merge($property);
-                $em->flush();
-                dump($property);
-            }
-            */
-            // return $this->redirectToRoute('home');
-        
     }
     /**
      * @Route("/biens/{slug}-{id}", name="property.show", requirements={"slug": "[a-z0-9\-]*"})
