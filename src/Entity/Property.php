@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,12 +15,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Property
 {
     const HEAT = [
-        0=> 'Electrique',
-        1=> 'Gaz',
-        2=> 'Bois',
-        3=> 'Fuel',
-        4=> 'Climatisation réversible'
+        0=> 'Electric',
+        1=> 'Gas',
+        2=> 'Wood',
+        3=> 'Benzin',
+        4=> 'Air cooler'
     ];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -99,9 +102,15 @@ class Property
      */
     private $created_at;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Option", inversedBy="properties")
+     */
+    private $options;
+
     public function __construct()
     {
         $this->created_at = new \DateTime();
+        $this->options = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -276,6 +285,34 @@ class Property
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+            $option->addProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        if ($this->options->contains($option)) {
+            $this->options->removeElement($option);
+            $option->removeProperty($this);
+        }
 
         return $this;
     }
