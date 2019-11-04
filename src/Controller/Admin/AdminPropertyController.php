@@ -3,14 +3,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Property;
 use App\Form\PropertyType;
+use App\Repository\PropertyRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
-
 
 class AdminPropertyController extends AbstractController
 {
@@ -53,7 +51,7 @@ class AdminPropertyController extends AbstractController
      * @Route("/admin/property/{id}", name="admin.property.edit", methods="GET|POST")
      * @param Property $property
      */
-    public function edit(Request $request, Property $property, $id)
+    public function edit(Request $request, Property $property, $id )
     {
 
         $form = $this->createForm(PropertyType::class, $property);
